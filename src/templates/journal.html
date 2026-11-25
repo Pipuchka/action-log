@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Журнал{% endblock %}
+{% block content %}
+{% set staff = user.role in ('auditor', 'admin') %}
+<h1>Журнал действий{% if not staff %} <small>(только ваши записи)</small>{% endif %}</h1>
+
+<form method="get" class="card filters">
+  <label>Уровень не ниже
+    <select name="level">
+      <option value="">любой</option>
+      {% for lvl in Level %}<option value="{{ lvl.name }}" {{ 'selected' if args.get('level') == lvl.name }}>{{ lvl.name }}</option>{% endfor %}
+    </select>
+  </label>
+  {% if staff %}
+  <label>Пользователь
+    <select name="user">
+      <option value="">все</option>
+      {% for u in users %}<option value="{{ u.id }}" {{ 'selected' if args.get('user') == u.id|string }}>{{ u.username }}</option>{% endfor %}
+    </select>
+  </label>
+  {% endif %}
+  <label>Действие начинается с <input name="action" value="{{ args.get('action', '') }}" placeholder="auth."></label>
+  <label>Текст <input name="q" value="{{ args.get('q', '') }}"></label>
+  <label>За последние дней <input name="days" type="number" min="0" value="{{ args.get('days', '') }}"></label>
+  <button>Найти</button>
+  <a href="{{ url_for('journal_page') }}">Сбросить</a>
+  {% if staff %}<a href="{{ url_for('journal_export', **args.to_dict()) }}">Скачать CSV</a>{% endif %}
+</form>
+
+<p class="muted">Найдено записей: {{ total }}</p>
+<table>
+  <thead><tr><th>Время</th><th>Уровень</th><th>Пользователь</th><th>Действие</th><th>Объект</th><th>Подробности</th></tr></thead>
+  <tbody>
+  {% for e in entries %}
+    <tr>
+      <td class="nowrap">{{ e.created_at|dt }}</td>
+      <td><span class="lvl {{ e.level_name|lower }}">{{ e.level_name }}</span></td>
+      <td>{{ e.username }}</td><td>{{ e.action }}</td><td>{{ e.target or '' }}</td><td class="details">{{ e.details or '' }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="6">Записей нет</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if pages > 1 %}
+<p class="pager">
+  {% if page > 1 %}<a href="{{ url_for('journal_page', page=page-1, **args.to_dict()|dictexcept('page')) }}">← Назад</a>{% endif %}
+  Страница {{ page }} из {{ pages }}
+  {% if page < pages %}<a href="{{ url_for('journal_page', page=page+1, **args.to_dict()|dictexcept('page')) }}">Вперёд →</a>{% endif %}
+</p>
+{% endif %}
+{% endblock %}

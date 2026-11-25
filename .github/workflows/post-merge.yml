@@ -1,0 +1,23 @@
+name: Post-merge
+
+# Пост-мердж хук: запускается после слияния в main
+on:
+  push:
+    branches: [main]
+
+jobs:
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Проверка, что приложение создаётся и отдаёт страницу входа
+        run: |
+          cd src
+          python -c "from app import create_app; c = create_app(db_path='ci-smoke.db', secret_key='ci').test_client(); r = c.get('/login'); assert r.status_code == 200, r.status_code; print('smoke test OK')"
+      - name: Итог
+        run: echo "Слияние в main прошло, smoke-тест пройден"

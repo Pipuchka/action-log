@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Статистика{% endblock %}
+{% block content %}
+<h1>Статистика журнала</h1>
+<form method="get" class="card">
+  <label>За последние дней (пусто — за всё время) <input name="days" type="number" min="0" value="{{ days }}"></label>
+  <button>Показать</button>
+</form>
+<p>Всего записей: <b>{{ stats.total }}</b></p>
+<div class="levels">
+  {% for name, n in stats.by_level.items() %}
+    <div class="lvlbox {{ name|lower }}"><div class="num">{{ n }}</div>{{ name }}</div>
+  {% endfor %}
+</div>
+<div class="two">
+  <div>
+    <h2>Частые действия</h2>
+    <table><thead><tr><th>Действие</th><th>Записей</th></tr></thead><tbody>
+      {% for action, n in stats.top_actions %}<tr><td>{{ action }}</td><td>{{ n }}</td></tr>
+      {% else %}<tr><td colspan="2">Нет данных</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+  <div>
+    <h2>Активные пользователи</h2>
+    <table><thead><tr><th>Пользователь</th><th>Записей</th></tr></thead><tbody>
+      {% for name, n in stats.top_users %}<tr><td>{{ name }}</td><td>{{ n }}</td></tr>
+      {% else %}<tr><td colspan="2">Нет данных</td></tr>{% endfor %}
+    </tbody></table>
+  </div>
+</div>
+{% endblock %}

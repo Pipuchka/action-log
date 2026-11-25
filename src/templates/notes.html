@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Заметки{% endblock %}
+{% block content %}
+<h1>Мои заметки</h1>
+<p class="muted">Каждое добавление и удаление заметки записывается в журнал действий.</p>
+<form method="post" class="card">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <label>Новая заметка (до 200 символов) <input name="text" maxlength="200" required></label>
+  <button>Добавить</button>
+</form>
+<table>
+  <thead><tr><th>№</th><th>Заметка</th><th>Создана</th><th></th></tr></thead>
+  <tbody>
+  {% for n in notes %}
+    <tr>
+      <td>{{ n.id }}</td><td>{{ n.text }}</td><td>{{ n.created_at|dt }}</td>
+      <td>
+        <form method="post" action="{{ url_for('note_delete', note_id=n.id) }}" class="inline">
+          <input type="hidden" name="csrf" value="{{ csrf_token }}">
+          <button class="link danger">Удалить</button>
+        </form>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4">Заметок пока нет</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
