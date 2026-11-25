@@ -1,0 +1,26 @@
+@startuml
+title UML Sequence: неудачный вход и просмотр журнала аудитором
+actor "Пользователь" as U
+actor "Аудитор" as A
+participant "Flask" as API
+participant "ActionLog" as LOG
+database "SQLite" as DB
+
+U -> API: POST /login (неверный пароль)
+API -> API: проверка пароля не прошла
+API -> LOG: warning(anonymous, "auth.login_failed", details)
+LOG -> LOG: уровень >= порога? маскирование секретов
+LOG -> DB: INSERT INTO log_entries
+API --> U: сообщение «Неверный логин или пароль»
+
+A -> API: GET /journal?level=WARNING
+API -> LOG: count(actor, min_level) и query(actor, min_level)
+LOG -> LOG: проверка права log:read_all
+LOG -> DB: SELECT ... WHERE level >= 30
+API --> A: страница журнала с записями
+
+A -> API: GET /journal/export.csv
+API -> LOG: export_csv(actor)
+LOG -> DB: SELECT
+API --> A: файл journal.csv
+@enduml
