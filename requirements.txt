@@ -1,0 +1,7 @@
+flask>=2.3
+pytest
+pytest-cov
+flake8
+black
+isort
+pre-commit

@@ -1,0 +1,4 @@
+# Владельцы кода: правки в этих путях требуют ревью указанных участников
+src/action_log/ @Pipuchka
+src/app.py src/templates/ src/static/ @Pipuchka
+docs/ @Pipuchka
