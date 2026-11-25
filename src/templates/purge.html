@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Очистка журнала{% endblock %}
+{% block content %}
+<h1>Очистка журнала</h1>
+<p>Удаляются записи старше указанного числа дней. Сама очистка записывается в журнал как событие уровня WARNING.</p>
+<form method="post" class="card">
+  <input type="hidden" name="csrf" value="{{ csrf_token }}">
+  <label>Удалить записи старше (дней) <input name="days" type="number" min="0" value="30" required></label>
+  <button class="danger-btn">Очистить</button>
+</form>
+{% endblock %}

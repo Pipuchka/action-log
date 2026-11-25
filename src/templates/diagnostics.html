@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Диагностика{% endblock %}
+{% block content %}
+<h1>Диагностика</h1>
+<p>Здесь можно записать в журнал тестовое событие любого уровня. Текущий порог записи:
+  <b>{{ min_level.name }}</b> (события ниже этого уровня не сохраняются).</p>
+<div class="card">
+  {% for kind, title in [('debug', 'DEBUG: отладочное'), ('warning', 'WARNING: предупреждение'), ('error', 'ERROR: ошибка'), ('critical', 'CRITICAL: критический сбой')] %}
+    <form method="post" action="{{ url_for('diagnostics_run', kind=kind) }}" class="inline">
+      <input type="hidden" name="csrf" value="{{ csrf_token }}">
+      <button class="lvl {{ kind }}">{{ title }}</button>
+    </form>
+  {% endfor %}
+</div>
+<p><a href="{{ url_for('journal_page') }}">Открыть журнал</a></p>
+{% endblock %}
