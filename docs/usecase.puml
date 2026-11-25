@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+title UML Use Case: журнал действий пользователей
+actor "Пользователь" as U
+actor "Аудитор" as A
+actor "Администратор" as M
+U <|-- A
+A <|-- M
+
+rectangle "Система «Журнал действий»" {
+  usecase "Регистрация и вход" as UC1
+  usecase "Работа с заметками (действия попадают в журнал)" as UC2
+  usecase "Запись тестового события (диагностика)" as UC3
+  usecase "Просмотр своих записей" as UC4
+  usecase "Фильтры и поиск по журналу" as UC5
+  usecase "Просмотр записей всех пользователей" as UC6
+  usecase "Статистика по уровням" as UC7
+  usecase "Экспорт журнала в CSV" as UC8
+  usecase "Очистка старых записей" as UC9
+}
+
+U --> UC1
+U --> UC2
+U --> UC3
+U --> UC4
+U --> UC5
+A --> UC6
+A --> UC7
+A --> UC8
+M --> UC9
+@enduml
